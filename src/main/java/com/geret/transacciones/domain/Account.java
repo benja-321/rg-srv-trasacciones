@@ -1,5 +1,7 @@
 package com.geret.transacciones.domain;
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Document(collection = "cuentas")
-public class Account {
+public class Account implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

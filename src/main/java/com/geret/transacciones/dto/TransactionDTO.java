@@ -22,4 +22,5 @@ public class TransactionDTO implements Serializable {
 	private String description;
 	private Double amount;
 	private LocalDate date;
+	private String accountId;
 }

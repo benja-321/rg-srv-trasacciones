@@ -1,5 +1,9 @@
 package com.geret.transacciones.repository;
 
-public interface TransactionRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.geret.transacciones.domain.Transaction;
+
+public interface TransactionRepository extends MongoRepository<Transaction, String> {
 
 }

@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - rg-srv-transacciones
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://finanzas.personales.com/k8s/
+        username: ${{ secrets.AzureAppService_ContainerUsername_da5148e6eea74b2abdcca1d2ee5f2db8 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_899ef4bf947d47c3aeb033375d28d082 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: finanzas.personales.com/k8s/${{ secrets.AzureAppService_ContainerUsername_da5148e6eea74b2abdcca1d2ee5f2db8 }}/k8s/quickstart:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'rg-srv-transacciones'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_bc50f1b72b9540f0b558838cef589d62 }}
+        images: 'finanzas.personales.com/k8s/${{ secrets.AzureAppService_ContainerUsername_da5148e6eea74b2abdcca1d2ee5f2db8 }}/k8s/quickstart:${{ github.sha }}'
